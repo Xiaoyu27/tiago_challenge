@@ -2,7 +2,7 @@
 
 // Default constructor
 RobotTaskStatus::RobotTaskStatus()
-: status_(Status::QUEUED), arm_(Arm::ARM)
+: status_(Status::INIT), arm_(Arm::ARM)
 {
   // goal_ is default-initialized
 }
@@ -47,12 +47,9 @@ RobotTaskStatus::Arm RobotTaskStatus::getArm() const
 std::string RobotTaskStatus::statusToString(Status status)
 {
   switch (status) {
-    case Status::QUEUED:        return "queued";
+    case Status::INIT:        return "queued";
     case Status::WAITING_BRICK: return "waiting_brick";
-    case Status::GRASPED_BRICK: return "grasped_brick";
-    case Status::ONGOING:       return "ongoing";
-    case Status::LEAVE_BRICK:   return "leave_brick";
-    case Status::DONE:          return "done";
+
     default:                    return "unknown";
   }
 }

@@ -187,7 +187,7 @@ void icr_Motionplanning_arms::SendGripperAction(
 
   if (command == "OPEN") {
     for (size_t i = 0; i < joint_names.size(); ++i) {
-      goal.trajectory.points[0].positions[i] = 0.04;  // example open pos
+      goal.trajectory.points[0].positions[i] = 0.015;  // example open pos
     }
   } else if (command == "CLOSE") {
     for (size_t i = 0; i < joint_names.size(); ++i) {
@@ -304,6 +304,34 @@ int icr_Motionplanning_arms::ArmMotionPlanning(RobotTaskStatus action_to_do)
   }
 
   return EXIT_SUCCESS;
+}
+
+void move_to_waiting_brick()
+{
+  geometry_msgs::msg::Pose target_pose;
+  target_pose.position.x = 0.4;
+  target_pose.position.y = 0.0;
+  target_pose.position.z = 0.5;
+
+  // Simple orientation (quaternion), facing forward
+  target_pose.orientation.x = 0.0;
+  target_pose.orientation.y = 0.0;
+  target_pose.orientation.z = 0.0;
+  target_pose.orientation.w = 1.0;
+}
+
+void move_to_placing_pose()
+{
+  geometry_msgs::msg::Pose target_pose;
+  target_pose.position.x = 0.4;
+  target_pose.position.y = 0.0;
+  target_pose.position.z = 0.5;
+
+  // Simple orientation (quaternion), facing forward
+  target_pose.orientation.x = 0.0;
+  target_pose.orientation.y = 0.0;
+  target_pose.orientation.z = 0.0;
+  target_pose.orientation.w = 1.0;
 }
 
 void icr_Motionplanning_arms::motion_planning_control(

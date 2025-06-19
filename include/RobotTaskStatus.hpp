@@ -9,11 +9,12 @@ public:
   // Task status
   enum class Status
   {
-    QUEUED,
+    INIT = 0,
     WAITING_BRICK,
-    GRASPED_BRICK,
-    ONGOING,
-    LEAVE_BRICK,
+    CLOSE_GRIPPER,
+    MOVE_TO_PLACE,
+    OPEN_GRIPPER,
+    MOVE_TO_WAITING,
     DONE
   };
 

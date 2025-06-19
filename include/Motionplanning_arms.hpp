@@ -115,5 +115,7 @@ public:
     double Target_Right_Orientation[3]);
   // void icr_Motionplanning_arms::Goal_Arms_Absolute_quaternion(double Target_Left_Arm_pose[3], double Target_Right_Arm_pose[3],tf::Quaternion quat_left,tf::Quaternion quat_right);
 
+  void move_to_waiting_brick(int brick_counter);
+  void move_to_placing_pose(int brick_counter);
 
 };
