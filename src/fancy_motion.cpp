@@ -22,17 +22,19 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <bits/stdc++.h>
 
 // Parameters to set during the demo
 double brick_length = 0.05; // in cm
 double brick_height = 0.03; // in cm
+double start_height_offset = 0.0;
 
 
 geometry_msgs::msg::Pose_<std::allocator<void> > get_grasp_pose(){
   geometry_msgs::msg::Pose grasp_pose;
   grasp_pose.position.x = 0.6;
   grasp_pose.position.y = 0.1;
-  grasp_pose.position.z = 1.12;
+  grasp_pose.position.z = 1.12 + start_height_offset;
 
   // Simple orientation (quaternion), facing forward
   grasp_pose.orientation.x = 0.0;
@@ -47,7 +49,7 @@ geometry_msgs::msg::Pose_<std::allocator<void> > get_start_pose(){
   geometry_msgs::msg::Pose start_pose;
   start_pose.position.x = 0.6;
   start_pose.position.y = 0.0;
-  start_pose.position.z = 1.12;
+  start_pose.position.z = 1.12 + start_height_offset;
 
   // Simple orientation (quaternion), facing forward
   start_pose.orientation.x = 0.0;
@@ -67,7 +69,7 @@ geometry_msgs::msg::Pose_<std::allocator<void> > get_fancy_start_pose(int brick_
       std::cout << "Pose 1" << std::endl;
       start_pose.position.x = 0.6;
       start_pose.position.y = brick_length/2;
-      start_pose.position.z = 1.12;
+      start_pose.position.z = 1.12 + start_height_offset;
 
       // Simple orientation (quaternion), facing forward
       start_pose.orientation.x = -0.5;
@@ -81,7 +83,7 @@ geometry_msgs::msg::Pose_<std::allocator<void> > get_fancy_start_pose(int brick_
       std::cout << "Pose 2" << std::endl;
       start_pose.position.x = 0.6;
       start_pose.position.y = -brick_length/2;
-      start_pose.position.z = 1.12;
+      start_pose.position.z = 1.12 + start_height_offset;
 
       // Simple orientation (quaternion), facing forward
       start_pose.orientation.x = -0.5;
@@ -93,7 +95,7 @@ geometry_msgs::msg::Pose_<std::allocator<void> > get_fancy_start_pose(int brick_
       std::cout << "Pose 3" << std::endl;
       start_pose.position.x = 0.6;
       start_pose.position.y = 0.0;
-      start_pose.position.z = 1.12;
+      start_pose.position.z = 1.12 + start_height_offset;
 
       // Simple orientation (quaternion), facing forward
       start_pose.orientation.x = 0.0;
@@ -105,7 +107,7 @@ geometry_msgs::msg::Pose_<std::allocator<void> > get_fancy_start_pose(int brick_
       std::cout << "Pose 4" << std::endl;
       start_pose.position.x = 0.6 - brick_length;
       start_pose.position.y = 0.1;
-      start_pose.position.z = 1.12;
+      start_pose.position.z = 1.12 + start_height_offset;
 
       // Simple orientation (quaternion), facing forward
       start_pose.orientation.x = 0.0;
@@ -119,7 +121,7 @@ geometry_msgs::msg::Pose_<std::allocator<void> > get_fancy_start_pose(int brick_
 
       start_pose.position.x = 0.6;
       start_pose.position.y = 0.0;
-      start_pose.position.z = 1.12;
+      start_pose.position.z = 1.12 + start_height_offset;
 
       // Simple orientation (quaternion), facing forward
       start_pose.orientation.x = 0.0;
@@ -130,7 +132,50 @@ geometry_msgs::msg::Pose_<std::allocator<void> > get_fancy_start_pose(int brick_
   return start_pose;
 }
 
+moveit_msgs::msg::PlanningScene add_brick_obstacle(double height){
+  geometry_msgs::msg::PoseStamped obstacle_pose;
+  obstacle_pose.header.frame_id = "base_footprint";
+  obstacle_pose.pose.position.x = 0.55;
+  obstacle_pose.pose.position.y = 0.0;
+  obstacle_pose.pose.position.z = .56+height;
+  obstacle_pose.pose.orientation.x = 0.0;
+  obstacle_pose.pose.orientation.y = 0.0;
+  obstacle_pose.pose.orientation.z = 0.0;
+  obstacle_pose.pose.orientation.w = 1.0;
 
+  moveit_msgs::msg::CollisionObject collision_object;
+  shape_msgs::msg::SolidPrimitive primitive;
+  geometry_msgs::msg::Pose pose_collision_object;
+
+   
+  collision_object.header.frame_id = "base_footprint";
+  collision_object.id = "layer" + std::to_string(height/brick_height);
+
+  primitive.type = primitive.BOX;
+  // primitive.dimensions = {0.5, 0.05, 0.03};
+  primitive.dimensions = {0.1, 0.1, 0.03};  // x, y, z
+    // x, y, z
+
+  pose_collision_object.position.x = obstacle_pose.pose.position.x +
+    (primitive.dimensions[0] / 2.0);
+  pose_collision_object.position.y = obstacle_pose.pose.position.y;
+  pose_collision_object.position.z = obstacle_pose.pose.position.z -
+    (primitive.dimensions[2] / 2.0) + 0.002;
+
+  pose_collision_object.orientation = obstacle_pose.pose.orientation;
+
+  collision_object.primitives.push_back(primitive);
+  collision_object.primitive_poses.push_back(pose_collision_object);
+  collision_object.operation = moveit_msgs::msg::CollisionObject::ADD;
+  
+
+  moveit_msgs::msg::PlanningScene planning_scene_msg;
+  planning_scene_msg.world.collision_objects.push_back(collision_object);
+  planning_scene_msg.is_diff = true;
+
+ 
+  return planning_scene_msg;
+}
 
 int main(int argc, char **argv)
 {
@@ -247,7 +292,15 @@ int main(int argc, char **argv)
       // Increase the placing location if its the start of the new layer
       if (brick_counter % 2 == 0) {
         bottom_lift_value += brick_height ;
-      }
+
+      // Add layer to moveit for tower avoidance
+      } //else {
+      //   moveit_msgs::msg::PlanningScene brick_scene_msg;
+      //   brick_scene_msg = add_brick_obstacle(bottom_lift_value);
+
+      //   planning_scene_publisher_->publish(brick_scene_msg);
+      //   std::cout << "Added brick" << std::endl;
+      // }
       std::cout << "Move to height: "<< bottom_lift_value << std::endl;
 
       node->TorsoControl(bottom_lift_value);
