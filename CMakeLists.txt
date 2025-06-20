@@ -41,6 +41,12 @@ ament_target_dependencies(motion_planning_lib ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 # Add executable
 add_executable(tiago_challenge_exe src/main_motion.cpp)
+# Add executable
+add_executable(jon_exe src/jon_main_motion.cpp)
+
+# Add executable
+add_executable(fancy_exe src/fancy_motion.cpp)
+
 
 # Link libraries
 ament_target_dependencies(tiago_challenge_exe ${THIS_PACKAGE_INCLUDE_DEPENDS})
@@ -49,6 +55,23 @@ target_link_libraries(tiago_challenge_exe motion_planning_lib)
 install(TARGETS tiago_challenge_exe
   DESTINATION lib/${PROJECT_NAME}
 )
+
+# Link libraries
+ament_target_dependencies(jon_exe ${THIS_PACKAGE_INCLUDE_DEPENDS})
+target_link_libraries(jon_exe motion_planning_lib)
+# Install target
+install(TARGETS jon_exe
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# Link libraries
+ament_target_dependencies(fancy_exe ${THIS_PACKAGE_INCLUDE_DEPENDS})
+target_link_libraries(fancy_exe motion_planning_lib)
+# Install target
+install(TARGETS fancy_exe
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 
 # Export package
 ament_package()
