@@ -245,8 +245,9 @@ int main(int argc, char **argv)
     {
       // move_to_waiting_brick();
 
-      geometry_msgs::msg::Pose grasp_pose = get_grasp_pose();
-      node->motion_planning_control(grasp_pose, RobotTaskStatus::Arm::ARM); // or "arm" depending on your group name
+      // geometry_msgs::msg::Pose grasp_pose = get_grasp_pose();
+
+      // node->motion_planning_control(grasp_pose, RobotTaskStatus::Arm::ARM); // or "arm" depending on your group name
       std::cout << "robot_state: " << (int)robot_state << std::endl;
 
       std::cout << "press enter to grasp" << std::endl;
