@@ -23,6 +23,12 @@
 #include <string>
 #include <iostream>
 
+// Parameters to set during the demo
+double brick_length = 0.05; // in cm
+double brick_height = 0.014; // in cm
+double start_height_offset = 0.0;
+double table_height = 0.53;
+
 geometry_msgs::msg::Pose_<std::allocator<void> > get_grasp_pose(){
   geometry_msgs::msg::Pose start_pose;
   start_pose.position.x = 0.6;
@@ -42,7 +48,7 @@ geometry_msgs::msg::Pose_<std::allocator<void> > get_start_pose(){
   geometry_msgs::msg::Pose start_pose;
   start_pose.position.x = 0.6;
   start_pose.position.y = 0.0;
-  start_pose.position.z = 1.12;
+  start_pose.position.z = 1.12 + start_height_offset;
 
   // Simple orientation (quaternion), facing forward
   start_pose.orientation.x = 0.0;
@@ -158,7 +164,7 @@ int main(int argc, char **argv)
         std::cout << "Moving to place pose.\n";
         
         // Move to the place position
-        lift_value = .0 + 0.02*brick_counter; // Example lift value within limits
+        lift_value = .0 + brick_height*brick_counter; // Example lift value within limits
         std::cout << "Move to height: "<< lift_value << std::endl;
 
         node->TorsoControl(lift_value);

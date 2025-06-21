@@ -26,8 +26,9 @@
 
 // Parameters to set during the demo
 double brick_length = 0.05; // in cm
-double brick_height = 0.03; // in cm
+double brick_height = 0.014; // in cm
 double start_height_offset = 0.0;
+double table_height = 0.53;
 
 
 geometry_msgs::msg::Pose_<std::allocator<void> > get_grasp_pose(){
@@ -137,7 +138,7 @@ moveit_msgs::msg::PlanningScene add_brick_obstacle(double height){
   obstacle_pose.header.frame_id = "base_footprint";
   obstacle_pose.pose.position.x = 0.55;
   obstacle_pose.pose.position.y = 0.0;
-  obstacle_pose.pose.position.z = .56+height;
+  obstacle_pose.pose.position.z = table_height+height;
   obstacle_pose.pose.orientation.x = 0.0;
   obstacle_pose.pose.orientation.y = 0.0;
   obstacle_pose.pose.orientation.z = 0.0;
@@ -213,7 +214,7 @@ int main(int argc, char **argv)
   obstacle_pose.header.frame_id = "base_footprint";
   obstacle_pose.pose.position.x = 0.4;
   obstacle_pose.pose.position.y = 0.0;
-  obstacle_pose.pose.position.z = .53;
+  obstacle_pose.pose.position.z = table_height;
   obstacle_pose.pose.orientation.x = 0.0;
   obstacle_pose.pose.orientation.y = 0.0;
   obstacle_pose.pose.orientation.z = 0.0;
